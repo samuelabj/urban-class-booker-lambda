@@ -12,7 +12,7 @@ using CsQuery;
 
 namespace UrbanClassBooker {
     public class Function {
-        private static readonly string classEndpoint = "https://urbanclimb.com.au/uc-services/member-class/login.aspx?classId={0}&url=https://urbanclimb.com.au/uc-services/member-class/enrol.aspx?classId={0}";
+        private static readonly string classEndpoint = "https://portal.urbanclimb.com.au/uc-services/member-class/login.aspx?classId={0}&url=https://portal.urbanclimb.com.au/uc-services/member-class/enrol.aspx?classId={0}";
 
         public async Task FunctionHandler(InputDto input, ILambdaContext context) {
             if(String.IsNullOrWhiteSpace(input.ClassId)) {

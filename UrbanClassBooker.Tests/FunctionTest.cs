@@ -17,7 +17,7 @@ namespace UrbanClassBooker.Tests {
             var context = new TestLambdaContext();
 
             await function.FunctionHandler(new InputDto {
-                ClassId = "2b88fba7-898f-4bf2-be10-1b75710770e6",
+                ClassId = "a68f744f-1109-4dc9-95a5-9edf11e18883",
                 MemberIds = new string[] { "92050" }
             }, context);
         }

@@ -23,7 +23,9 @@ namespace UrbanClassBooker {
                 throw new ArgumentNullException(nameof(input.MemberIds));
             }
 
-            if(!input.MemberIds.Any()) {
+            var memberIds = input.MemberIds.Where(id => !String.IsNullOrWhiteSpace(id));
+
+            if(!memberIds.Any()) {
                 throw new ArgumentException("At least one member ID is required", nameof(input.MemberIds));
             }
 
@@ -37,19 +39,32 @@ namespace UrbanClassBooker {
                 var barcodeName = formCq.Select("#cphBody_txtBarcode").Attr("name");
                 var submitName = "ctl00$cphBody$btnSubmit";// formCq.Select("#cphBody_btnSubmit").Attr("name");
 
+                if(String.IsNullOrWhiteSpace(viewState)) {
+                    throw new ApplicationException($"Could not find {nameof(viewState)}: \n{formContent}");
+                }
+
+                if(String.IsNullOrWhiteSpace(eventValidation)) {
+                    throw new ApplicationException($"Could not find {nameof(eventValidation)}: \n{formContent}");
+                }
+
+                if(String.IsNullOrWhiteSpace(barcodeName)) {
+                    throw new ApplicationException($"Could not find {nameof(barcodeName)}: \n{formContent}");
+                }
+
                 var content = new Dictionary<string, string> {
                     {"__EVENTVALIDATION", eventValidation},
                     {"__VIEWSTATE", viewState},
                     {submitName, "LOGIN"}
                 };
 
-                var tasks = input.MemberIds.Select(id => Book(client, url, content, barcodeName, id));
+                var tasks = memberIds.Select(id => Book(client, url, content, barcodeName, id));
 
                 await Task.WhenAll(tasks);
             }
         }
 
         private async Task Book(HttpClient client, string url, Dictionary<string, string> content, string memberField, string memberId) {
+            content = new Dictionary<string, string>(content);
             content[memberField] = memberId;
 
             using(var response = await client.PostAsync(url, new FormUrlEncodedContent(content))) {
